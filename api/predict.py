@@ -10,10 +10,10 @@ model = joblib.load("mental_health_model.pkl")
 # Label mapping
 label_map = {
     0: "Normal",
-    1: "stress",
-    2: "burnout",
-    3: "anxiety",
-    4: "depression"
+    1: "Stress",
+    2: "Burnout",
+    3: "Anxiety",
+    4: "Depression"
 }
 
 @app.route('/predict', methods=['POST'])

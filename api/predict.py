@@ -4,31 +4,29 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Load model and label encoder
+# Load trained model
 model = joblib.load("mental_health_model.pkl")
 
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
         data = request.get_json()
-
-        # Expect: { "inputs": [A, P, S, C] }
         inputs = data.get("inputs")
 
+        # Validate input format
         if not isinstance(inputs, list) or len(inputs) != 4:
             return jsonify({"error": "Provide 4 numeric inputs: Academic, Personal, Social, Career"}), 400
 
+        # Validate numeric
         try:
             numeric_inputs = [float(i) for i in inputs]
         except:
             return jsonify({"error": "All inputs must be numeric"}), 400
 
         features = np.array(numeric_inputs).reshape(1, -1)
-        
-        prediction = model.predict(features)[0]
-        result_label = label_map.get(prediction, "Unknown Result")
+        prediction = int(model.predict(features)[0])  # ensure int output
 
-        return jsonify({"prediction": result_label}), 200
+        return jsonify({"prediction": prediction}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
